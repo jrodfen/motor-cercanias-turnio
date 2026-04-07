@@ -1,21 +1,21 @@
-name: Actualizador Nocturno Cercanias
+name: Actualizador Nocturno Mallas Renfe
 
 on:
   schedule:
-    - cron: '0 3 * * *' # Todos los días a las 03:00 AM
-  workflow_dispatch: # Botón manual
+    - cron: '0 3 * * *' # Todos los días a las 03:00 AM (Hora Servidor)
+  workflow_dispatch: # Botón manual para probarlo ahora
 
 permissions:
-  contents: write # Permiso para que el bot guarde el archivo
+  contents: write
 
 jobs:
   procesar-mallas:
     runs-on: ubuntu-latest
     steps:
-      - name: Descargar el código del repo
+      - name: Descargar el código
         uses: actions/checkout@v4
 
-      - name: Instalar Node.js
+      - name: Instalar Node.js (Motor)
         uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -23,13 +23,13 @@ jobs:
       - name: Instalar herramientas
         run: npm install
 
-      - name: Ejecutar Motor
+      - name: Ejecutar Extractor y Optimizador
         run: npm start
 
-      - name: Guardar nuevo JSON en GitHub
+      - name: Guardar los JSONs en el repositorio público
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add cercanias_optimizado.json
-          git commit -m "Actualización automática Cercanías" || echo "No hay cambios nuevos"
+          git add cercanias_opt.json mdld_opt.json
+          git commit -m "Actualización automática Mallas Renfe" || echo "No hay cambios nuevos"
           git push
